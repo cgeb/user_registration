@@ -13,4 +13,15 @@ RSpec.describe "signup" do
       expect(page).to have_content("Profile for ckg61386")
     end
   end
+
+  context "failure" do
+    it "does not create a new user" do
+      visit(new_user_path)
+      fill_in("Password", with: "password")
+      fill_in("Password confirmation", with: "password")
+      click_button("Sign Up")
+      expect(User.count).to eq(0)
+      expect(page).to have_content("Email can't be blank")
+    end
+  end
 end
