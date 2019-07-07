@@ -6,4 +6,6 @@ Rails.application.routes.draw do
 
   resources :users
   resources :password_resets, only: [:new, :create, :edit, :update], param: :token
+
+  root to: "sessions#new"
 end
