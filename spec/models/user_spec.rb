@@ -8,4 +8,11 @@ RSpec.describe User, type: :model do
       expect(user.username).to eq("abc")
     end
   end
+
+  describe ".generate_reset_token" do
+    it "sets the users reset token" do
+      user.generate_reset_token
+      expect(user.reload.reset_token).not_to be_nil
+    end
+  end
 end

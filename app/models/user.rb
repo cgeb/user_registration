@@ -6,6 +6,12 @@ class User < ApplicationRecord
 
   before_create :set_username
 
+  def generate_reset_token
+    self.reset_token = SecureRandom.hex(10)
+    self.reset_sent_at = Time.zone.now
+    save!(validate: false)
+  end
+
   private
 
   def set_username
