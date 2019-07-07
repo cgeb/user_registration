@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update]
+  before_action :redirect_unless_logged_in, only: [:edit, :update]
+  before_action :redirect_unless_authorized, only: [:edit, :update]
 
   # GET /users/1
   # GET /users/1.json
@@ -55,5 +57,19 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       params.require(:user).permit(:username, :email, :password, :password_confirmation)
+    end
+
+    def redirect_unless_logged_in
+      unless current_user
+        flash[:alert] = "You must be logged in."
+        redirect_to login_path
+      end
+    end
+
+    def redirect_unless_authorized
+      unless current_user.id == @user.id
+        flash[:alert] = "You are not authorized to do that."
+        redirect_to login_path
+      end
     end
 end
