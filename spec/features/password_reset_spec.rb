@@ -18,4 +18,22 @@ RSpec.describe "reset password" do
       expect(current_path).to eq(user_path(user))
     end
   end
+
+  context "failure" do
+    it "handles trying to request password reset for non-existing user" do
+      visit(new_password_reset_path)
+      fill_in("Email", with: "nonexistinguser@test.com")
+      click_button("Send Reset Password Instructions")
+      expect(page).to have_content("Email address not found")
+    end
+
+    it "handles incorrect tokens" do
+      visit(new_password_reset_path)
+      fill_in("Email", with: "ckg61386@gmail.com")
+      click_button("Send Reset Password Instructions")
+      visit(edit_password_reset_path("xxxxxxx", email: user.email))
+      expect(current_path).to eq(login_path)
+      expect(page).to have_content("Email or reset token is invalid")
+    end
+  end
 end

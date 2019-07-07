@@ -17,12 +17,18 @@ class PasswordResetsController < ApplicationController
 
   def edit
     @user = User.find_by(reset_token: params[:token], email: params[:email])
-    redirect_to login_path unless @user
+    unless @user
+      flash[:alert] = "Email or reset token is invalid"
+      redirect_to login_path unless @user
+    end
   end
 
   def update
     @user = User.find_by(reset_token: params[:token], email: params[:user][:email])
-    redirect_to login_path unless @user
+    unless @user
+      flash[:alert] = "Email or reset token is invalid"
+      redirect_to login_path unless @user
+    end
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: "User was successfully updated." }
