@@ -19,7 +19,14 @@ class PasswordResetsController < ApplicationController
     @user = User.find_by(reset_token: params[:token], email: params[:email])
     unless @user
       flash[:alert] = "Email or reset token is invalid"
-      redirect_to login_path unless @user
+      redirect_to login_path
+      return
+    end
+
+    if token_expired?
+      flash[:alert] = "Token is expired"
+      redirect_to login_path
+      return
     end
   end
 
@@ -27,8 +34,16 @@ class PasswordResetsController < ApplicationController
     @user = User.find_by(reset_token: params[:token], email: params[:user][:email])
     unless @user
       flash[:alert] = "Email or reset token is invalid"
-      redirect_to login_path unless @user
+      redirect_to login_path
+      return
     end
+
+    if token_expired?
+      flash[:alert] = "Token is expired"
+      redirect_to login_path
+      return
+    end
+
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: "User was successfully updated." }
@@ -42,5 +57,9 @@ class PasswordResetsController < ApplicationController
 
     def user_params
       params.require(:user).permit(:password, :password_confirmation)
+    end
+
+    def token_expired?
+      @user.reset_sent_at < 6.hours.ago
     end
 end

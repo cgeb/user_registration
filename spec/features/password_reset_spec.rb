@@ -35,5 +35,15 @@ RSpec.describe "reset password" do
       expect(current_path).to eq(login_path)
       expect(page).to have_content("Email or reset token is invalid")
     end
+
+    it "handles expired tokens" do
+      visit(new_password_reset_path)
+      fill_in("Email", with: "ckg61386@gmail.com")
+      click_button("Send Reset Password Instructions")
+      user.update_column(:reset_sent_at, 7.hours.ago)
+      visit(edit_password_reset_path(user.reload.reset_token, email: user.email))
+      expect(current_path).to eq(login_path)
+      expect(page).to have_content("Token is expired")
+    end
   end
 end
