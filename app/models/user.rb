@@ -3,6 +3,7 @@ class User < ApplicationRecord
 
   validates :email, presence: true, uniqueness: true
   validates :username, length: { minimum: 5 }, on: :update
+  validates :password, length: { minimum: 8 }
 
   before_create :set_username
 
