@@ -1,7 +1,14 @@
 require "rails_helper"
 
 RSpec.describe "edit profile" do
-  let(:user) { User.create(email: "test@test.com", password: "password") }
+  let!(:user) { User.create(email: "test@test.com", password: "password") }
+
+  before do
+    visit(login_path)
+    fill_in("Email", with: "test@test.com")
+    fill_in("Password", with: "password")
+    click_button("Login")
+  end
 
   context "success" do
     it "allows user to edit profile" do
